@@ -1,0 +1,883 @@
+1. Java OOPs
+🔴 Healthcare Diagnosis Engine
+INTERFACE DiagnosisStrategy
+    METHOD diagnose(List<String> symptoms) RETURNS String
+END INTERFACE
+
+CLASS RuleBasedDiagnosis IMPLEMENTS DiagnosisStrategy
+    METHOD diagnose(List<String> symptoms) RETURNS String
+        IF symptoms CONTAINS "fever" AND "cough" THEN
+            RETURN "Preliminary Diagnosis (Rule-Based): Flu or COVID-19"
+        ELSE
+            RETURN "Preliminary Diagnosis (Rule-Based): General Viral Infection"
+        END IF
+    END METHOD
+END CLASS
+
+CLASS AIBasedDiagnosis IMPLEMENTS DiagnosisStrategy
+    METHOD diagnose(List<String> symptoms) RETURNS String
+        IF symptoms CONTAINS "headache" AND "dizziness" THEN
+            RETURN "AI Prediction: High probability of Migraine or Vertigo."
+        ELSE
+            RETURN "AI Prediction: Insufficient data for a confident diagnosis."
+        END IF
+    END METHOD
+END CLASS
+
+CLASS DiagnosisContext
+    PRIVATE strategy: DiagnosisStrategy
+
+    // Method to set the strategy at runtime
+    METHOD setStrategy(DiagnosisStrategy newStrategy)
+        this.strategy = newStrategy
+    END METHOD
+
+    // Method to execute the diagnosis using the current strategy
+    METHOD performDiagnosis(List<String> symptoms)
+        PRINT "Executing diagnosis..."
+        String result = this.strategy.diagnose(symptoms)
+        PRINT result
+    END METHOD
+END CLASS
+
+FUNCTION main()
+    DiagnosisContext context = NEW DiagnosisContext()
+
+    List<String> generalSymptoms = ["fever", "cough", "fatigue"]
+    PRINT "Patient in General Medicine:"
+    context.setStrategy(NEW RuleBasedDiagnosis())
+    context.performDiagnosis(generalSymptoms)
+    PRINT "----------------------------------"
+    List<String> neuroSymptoms = ["headache", "dizziness", "nausea"]
+    PRINT "Patient in Neurology:"
+    context.setStrategy(NEW AIBasedDiagnosis())
+    context.performDiagnosis(neuroSymptoms)
+    PRINT "----------------------------------"
+
+        CLASS GeneticPatternDiagnosis IMPLEMENTS DiagnosisStrategy
+        METHOD diagnose(List<String> symptoms) RETURNS String
+            RETURN "Genetic Analysis: Checking for hereditary patterns..."
+        END METHOD
+    END CLASS
+
+    PRINT "New department using Genetic Analysis:"
+    context.setStrategy(NEW GeneticPatternDiagnosis())
+    context.performDiagnosis(neuroSymptoms)
+
+END FUNCTION
+
+
+ Restaurant POS Billing System
+
+INTERFACE MenuItem
+    FUNCTION getBasePrice() RETURNS Double
+    FUNCTION calculatePriceWithTax() RETURNS Double
+    FUNCTION getName() RETURNS String
+END INTERFACE
+
+INTERFACE DiscountPolicy
+    FUNCTION applyDiscount(Double totalAmount) RETURNS Double
+END INTERFACE
+
+CLASS FoodItem IMPLEMENTS MenuItem
+        CONSTRUCTOR(name, price)
+    FUNCTION calculatePriceWithTax() RETURNS Double
+        RETURN this.price * 1.05
+    END FUNCTION
+    
+END CLASS
+
+CLASS BeverageItem IMPLEMENTS MenuItem
+    
+    CONSTRUCTOR(name, price)
+    FUNCTION calculatePriceWithTax() RETURNS Double
+        
+        RETURN this.price * 1.12
+    END FUNCTION
+    
+END CLASS
+
+CLASS ImportedFoodItem EXTENDS FoodItem
+    CONSTRUCTOR(name, price)
+        SUPER(name, price)
+    END CONSTRUCTOR
+    FUNCTION calculatePriceWithTax() RETURNS Double
+        // Apply base food tax + additional customs duty
+        Double priceWithGST = SUPER.calculatePriceWithTax()
+        Double customsDuty = this.price * 0.10 // 10% customs duty
+        RETURN priceWithGST + customsDuty
+    END FUNCTION
+END CLASS
+
+// Step 3: Implement Concrete Discount Policy Classes
+CLASS PercentageDiscount IMPLEMENTS DiscountPolicy
+    // property: percentage
+    CONSTRUCTOR(percentage)
+    FUNCTION applyDiscount(Double totalAmount) RETURNS Double
+        RETURN totalAmount * (1 - this.percentage / 100)
+    END FUNCTION
+END CLASS
+
+CLASS FlatDiscount IMPLEMENTS DiscountPolicy
+        CONSTRUCTOR(amount)
+    FUNCTION applyDiscount(Double totalAmount) RETURNS Double
+        RETURN totalAmount - this.amount
+    END FUNCTION
+END CLASS
+
+CLASS Bill
+    PRIVATE items: List<MenuItem>
+    PRIVATE discountPolicy: DiscountPolicy
+
+    CONSTRUCTOR(discountPolicy)
+        this.items = NEW List()
+        this.discountPolicy = discountPolicy
+    END CONSTRUCTOR
+
+    METHOD addItem(MenuItem item)
+        this.items.add(item)
+    END METHOD
+
+    METHOD generateBill()
+        Double subTotal = 0.0
+        PRINT "--- Bill Details ---"
+        FOR EACH item IN this.items
+            Double itemPriceWithTax = item.calculatePriceWithTax()
+            subTotal = subTotal + itemPriceWithTax
+            PRINT item.getName() + ": ₹" + itemPriceWithTax
+        END FOR
+        PRINT "Subtotal (inclusive of taxes): ₹" + subTotal
+
+        Double finalAmount = this.discountPolicy.applyDiscount(subTotal)
+        PRINT "Final Amount after discount: ₹" + finalAmount
+    END METHOD
+END CLASS
+
+// Step 5: Main execution flow
+FUNCTION main()
+    // Scenario: Customer orders with a 10% discount
+    List<MenuItem> order1 = [
+        NEW FoodItem("Paneer Tikka", 300),
+        NEW BeverageItem("Coke", 50),
+        NEW ImportedFoodItem("Imported Cheese", 500)
+    ]
+    DiscountPolicy tenPercentOff = NEW PercentageDiscount(10)
+    Bill customerBill = NEW Bill(tenPercentOff)
+
+    FOR EACH item IN order1
+        customerBill.addItem(item)
+    END FOR
+
+    customerBill.generateBill()
+END FUNCTION
+
+
+
+DSA 
+Distributed Load Balancer – Queue Simulation
+
+
+// PSEUDO-CODE
+
+CLASS LoadBalancer
+    PRIVATE servers: Queue<String>
+
+    CONSTRUCTOR()
+        this.servers = NEW Queue()
+    END CONSTRUCTOR
+
+    // Add a new server to the system
+    METHOD addServer(String serverName)
+        this.servers.enqueue(serverName)
+        PRINT "Server " + serverName + " added."
+    END METHOD
+
+    // Remove a server from the system (e.g., due to failure)
+    METHOD removeServer(String serverName)
+        // This requires iterating and rebuilding the queue if standard queue lacks remove()
+        this.servers.remove(serverName)
+        PRINT "Server " + serverName + " removed."
+    END METHOD
+
+    // Get the next available server for a request
+    METHOD getNextServer() RETURNS String
+        IF this.servers.isEmpty() THEN
+            RETURN "No available servers."
+        END IF
+        
+        // Round-robin logic:
+        // 1. Get the server from the front
+        String server = this.servers.dequeue()
+        // 2. Add it back to the end for the next cycle
+        this.servers.enqueue(server)
+        
+        RETURN server
+    END METHOD
+
+    METHOD processRequests(Integer numberOfRequests)
+        FOR i FROM 1 TO numberOfRequests
+            String assignedServer = getNextServer()
+            PRINT "Request R" + i + " -> " + assignedServer
+        END FOR
+    END METHOD
+
+END CLASS
+
+// Main simulation flow
+FUNCTION main()
+    LoadBalancer balancer = NEW LoadBalancer()
+
+    // 1. Initial servers
+    balancer.addServer("S1")
+    balancer.addServer("S2")
+    balancer.addServer("S3")
+    PRINT "--- Processing initial requests ---"
+    balancer.processRequests(3) // R1->S1, R2->S2, R3->S3
+
+    // 2. Add a new server dynamically
+    PRINT "\n--- Adding a new server S4 ---"
+    balancer.addServer("S4")
+    balancer.processRequests(4) // R4->S1, R5->S2, R6->S3, R7->S4
+
+    // 3. Remove a server that has failed
+    PRINT "\n--- Removing server S2 due to failure ---"
+    balancer.removeServer("S2")
+    balancer.processRequests(4) // R8->S1, R9->S3, R10->S4, R11->S1
+
+END FUNCTION
+
+
+Autocomplete Search Suggestions – Trie Implementation
+
+CLASS TrieNode
+    PROPERTY children: Map<Character, TrieNode>
+    PROPERTY isEndOfWord: Boolean
+    PROPERTY popularityScore: Integer
+
+    CONSTRUCTOR()
+        this.children = NEW Map()
+        this.isEndOfWord = false
+        this.popularityScore = 0
+    END CONSTRUCTOR
+END CLASS
+
+CLASS Trie
+    PRIVATE root: TrieNode
+
+    CONSTRUCTOR()
+        this.root = NEW TrieNode()
+    END CONSTRUCTOR
+
+    // Insert a word into the Trie
+    METHOD insert(String word, Integer popularity)
+        TrieNode current = this.root
+        FOR EACH char IN word
+            // Get the child node; if it doesn't exist, create it
+            current = current.children.computeIfAbsent(char, c -> NEW TrieNode())
+        END FOR
+        current.isEndOfWord = true
+        current.popularityScore = popularity
+    END METHOD
+
+    // Search for all words with a given prefix
+    METHOD suggest(String prefix) RETURNS List<String>
+        TrieNode prefixNode = findPrefixNode(prefix)
+        IF prefixNode IS NULL THEN
+            RETURN EMPTY List
+        END IF
+
+        List<Pair<String, Integer>> suggestions = NEW List()
+        findAllWordsFromNode(prefixNode, prefix, suggestions)
+
+        // Sort suggestions by popularity in descending order
+        suggestions.sort((a, b) -> b.popularity.compareTo(a.popularity))
+        
+        // Return just the words
+        RETURN suggestions.map(pair -> pair.word)
+    END METHOD
+
+    // Helper to find the node where the prefix ends
+    PRIVATE METHOD findPrefixNode(String prefix) RETURNS TrieNode
+        TrieNode current = this.root
+        FOR EACH char IN prefix
+            IF NOT current.children.containsKey(char) THEN
+                RETURN NULL // Prefix not in Trie
+            END IF
+            current = current.children.get(char)
+        END FOR
+        RETURN current
+    END METHOD
+
+    // Helper to recursively find all words from a starting node (DFS)
+    PRIVATE METHOD findAllWordsFromNode(TrieNode node, String currentPrefix, List<Pair<String, Integer>> results)
+        IF node.isEndOfWord THEN
+            results.add(NEW Pair(currentPrefix, node.popularityScore))
+        END IF
+
+        FOR EACH entry IN node.children.entrySet()
+            char ch = entry.getKey()
+            TrieNode childNode = entry.getValue()
+            findAllWordsFromNode(childNode, currentPrefix + ch, results)
+        END FOR
+    END METHOD
+END CLASS
+
+// Main execution flow
+FUNCTION main()
+    Trie searchEngine = NEW Trie()
+    searchEngine.insert("pizza hut", 80)
+    searchEngine.insert("pizza point", 95)
+    searchEngine.insert("pita bread", 70)
+    searchEngine.insert("pizzeria", 85)
+
+    // User types "pi"
+    String prefix = "pi"
+    List<String> results = searchEngine.suggest(prefix)
+    PRINT "Suggestions for '" + prefix + "': " + results 
+    // Expected output sorted by popularity: ["pizza point", "pizzeria", "pizza hut", "pita bread"]
+
+    // New restaurant opens
+    searchEngine.insert("pineapple cafe", 75)
+    
+    // User types "p"
+    prefix = "p"
+    results = searchEngine.suggest(prefix)
+    PRINT "Suggestions for '" + prefix + "': " + results
+END FUNCTION
+
+
+Here is the pseudo-code for the problems.
+
+1. Java OOPs
+🔴 Healthcare Diagnosis Engine
+This solution uses the Strategy Pattern to allow for interchangeable diagnosis algorithms. The DiagnosisContext acts as the entry point, which can be configured with any algorithm that implements the DiagnosisStrategy interface. This makes the system extensible, as adding a new algorithm like GeneticPatternDiagnosis requires only creating a new class, not modifying existing code.
+
+Java
+
+// PSEUDO-CODE
+
+// Step 1: Define the Strategy Interface
+INTERFACE DiagnosisStrategy
+    METHOD diagnose(List<String> symptoms) RETURNS String
+END INTERFACE
+
+// Step 2: Implement Concrete Strategies
+CLASS RuleBasedDiagnosis IMPLEMENTS DiagnosisStrategy
+    METHOD diagnose(List<String> symptoms) RETURNS String
+        IF symptoms CONTAINS "fever" AND "cough" THEN
+            RETURN "Preliminary Diagnosis (Rule-Based): Flu or COVID-19"
+        ELSE
+            RETURN "Preliminary Diagnosis (Rule-Based): General Viral Infection"
+        END IF
+    END METHOD
+END CLASS
+
+CLASS AIBasedDiagnosis IMPLEMENTS DiagnosisStrategy
+    METHOD diagnose(List<String> symptoms) RETURNS String
+        // Simulate a complex AI model prediction
+        IF symptoms CONTAINS "headache" AND "dizziness" THEN
+            RETURN "AI Prediction: High probability of Migraine or Vertigo."
+        ELSE
+            RETURN "AI Prediction: Insufficient data for a confident diagnosis."
+        END IF
+    END METHOD
+END CLASS
+
+// Step 3: Create the Context Class
+CLASS DiagnosisContext
+    PRIVATE strategy: DiagnosisStrategy
+
+    // Method to set the strategy at runtime
+    METHOD setStrategy(DiagnosisStrategy newStrategy)
+        this.strategy = newStrategy
+    END METHOD
+
+    // Method to execute the diagnosis using the current strategy
+    METHOD performDiagnosis(List<String> symptoms)
+        PRINT "Executing diagnosis..."
+        String result = this.strategy.diagnose(symptoms)
+        PRINT result
+    END METHOD
+END CLASS
+
+// Step 4: Main execution flow to demonstrate the pattern
+FUNCTION main()
+    // Create the context
+    DiagnosisContext context = NEW DiagnosisContext()
+
+    // Scenario 1: General Medicine patient
+    List<String> generalSymptoms = ["fever", "cough", "fatigue"]
+    PRINT "Patient in General Medicine:"
+    context.setStrategy(NEW RuleBasedDiagnosis())
+    context.performDiagnosis(generalSymptoms)
+    PRINT "----------------------------------"
+
+    // Scenario 2: Neurology patient
+    List<String> neuroSymptoms = ["headache", "dizziness", "nausea"]
+    PRINT "Patient in Neurology:"
+    context.setStrategy(NEW AIBasedDiagnosis())
+    context.performDiagnosis(neuroSymptoms)
+    PRINT "----------------------------------"
+
+    // Scenario 3: Adding a new algorithm without touching existing code
+    // A new class is created and can be plugged in immediately.
+    CLASS GeneticPatternDiagnosis IMPLEMENTS DiagnosisStrategy
+        METHOD diagnose(List<String> symptoms) RETURNS String
+            RETURN "Genetic Analysis: Checking for hereditary patterns..."
+        END METHOD
+    END CLASS
+
+    PRINT "New department using Genetic Analysis:"
+    context.setStrategy(NEW GeneticPatternDiagnosis())
+    context.performDiagnosis(neuroSymptoms)
+
+END FUNCTION
+🔴 Restaurant POS Billing System
+This solution uses Polymorphism and Interfaces. Each MenuItem knows how to calculate its own tax. The Bill class simply iterates over a list of items and calls the same method (calculatePriceWithTax) on each, regardless of its specific type. Similarly, different DiscountPolicy objects can be applied to the final bill without changing the billing logic, showcasing the power of interchangeable strategies.
+
+Java
+
+// PSEUDO-CODE
+
+// Step 1: Define Interfaces/Abstract Classes for Items and Discounts
+
+INTERFACE MenuItem
+    FUNCTION getBasePrice() RETURNS Double
+    FUNCTION calculatePriceWithTax() RETURNS Double
+    FUNCTION getName() RETURNS String
+END INTERFACE
+
+INTERFACE DiscountPolicy
+    FUNCTION applyDiscount(Double totalAmount) RETURNS Double
+END INTERFACE
+
+// Step 2: Implement Concrete Menu Item Classes
+CLASS FoodItem IMPLEMENTS MenuItem
+    // properties: name, price
+    CONSTRUCTOR(name, price)
+    FUNCTION calculatePriceWithTax() RETURNS Double
+        // 5% GST on food
+        RETURN this.price * 1.05
+    END FUNCTION
+    // other getter methods
+END CLASS
+
+CLASS BeverageItem IMPLEMENTS MenuItem
+    // properties: name, price
+    CONSTRUCTOR(name, price)
+    FUNCTION calculatePriceWithTax() RETURNS Double
+        // 12% GST on beverages
+        RETURN this.price * 1.12
+    END FUNCTION
+    // other getter methods
+END CLASS
+
+CLASS ImportedFoodItem EXTENDS FoodItem
+    CONSTRUCTOR(name, price)
+        SUPER(name, price)
+    END CONSTRUCTOR
+    FUNCTION calculatePriceWithTax() RETURNS Double
+        // Apply base food tax + additional customs duty
+        Double priceWithGST = SUPER.calculatePriceWithTax()
+        Double customsDuty = this.price * 0.10 // 10% customs duty
+        RETURN priceWithGST + customsDuty
+    END FUNCTION
+END CLASS
+
+// Step 3: Implement Concrete Discount Policy Classes
+CLASS PercentageDiscount IMPLEMENTS DiscountPolicy
+    // property: percentage
+    CONSTRUCTOR(percentage)
+    FUNCTION applyDiscount(Double totalAmount) RETURNS Double
+        RETURN totalAmount * (1 - this.percentage / 100)
+    END FUNCTION
+END CLASS
+
+CLASS FlatDiscount IMPLEMENTS DiscountPolicy
+    // property: amount
+    CONSTRUCTOR(amount)
+    FUNCTION applyDiscount(Double totalAmount) RETURNS Double
+        RETURN totalAmount - this.amount
+    END FUNCTION
+END CLASS
+
+// Step 4: Create the main Billing Class
+CLASS Bill
+    PRIVATE items: List<MenuItem>
+    PRIVATE discountPolicy: DiscountPolicy
+
+    CONSTRUCTOR(discountPolicy)
+        this.items = NEW List()
+        this.discountPolicy = discountPolicy
+    END CONSTRUCTOR
+
+    METHOD addItem(MenuItem item)
+        this.items.add(item)
+    END METHOD
+
+    METHOD generateBill()
+        Double subTotal = 0.0
+        PRINT "--- Bill Details ---"
+        FOR EACH item IN this.items
+            Double itemPriceWithTax = item.calculatePriceWithTax()
+            subTotal = subTotal + itemPriceWithTax
+            PRINT item.getName() + ": ₹" + itemPriceWithTax
+        END FOR
+        PRINT "Subtotal (inclusive of taxes): ₹" + subTotal
+
+        Double finalAmount = this.discountPolicy.applyDiscount(subTotal)
+        PRINT "Final Amount after discount: ₹" + finalAmount
+    END METHOD
+END CLASS
+
+// Step 5: Main execution flow
+FUNCTION main()
+    // Scenario: Customer orders with a 10% discount
+    List<MenuItem> order1 = [
+        NEW FoodItem("Paneer Tikka", 300),
+        NEW BeverageItem("Coke", 50),
+        NEW ImportedFoodItem("Imported Cheese", 500)
+    ]
+    DiscountPolicy tenPercentOff = NEW PercentageDiscount(10)
+    Bill customerBill = NEW Bill(tenPercentOff)
+
+    FOR EACH item IN order1
+        customerBill.addItem(item)
+    END FOR
+
+    customerBill.generateBill()
+END FUNCTION
+2. Data Structures & Algorithms
+🔴 Distributed Load Balancer – Queue Simulation
+This solution uses a Queue to implement a round-robin scheduling algorithm. When a request comes in, the server at the front of the queue is assigned the task. That server is then moved to the back of the queue, ensuring the next request goes to the next server in line. The use of a queue makes this cyclic assignment efficient and simple to manage, even when servers are added or removed dynamically.
+
+Java
+
+// PSEUDO-CODE
+
+CLASS LoadBalancer
+    PRIVATE servers: Queue<String>
+
+    CONSTRUCTOR()
+        this.servers = NEW Queue()
+    END CONSTRUCTOR
+
+    // Add a new server to the system
+    METHOD addServer(String serverName)
+        this.servers.enqueue(serverName)
+        PRINT "Server " + serverName + " added."
+    END METHOD
+
+    // Remove a server from the system (e.g., due to failure)
+    METHOD removeServer(String serverName)
+        // This requires iterating and rebuilding the queue if standard queue lacks remove()
+        this.servers.remove(serverName)
+        PRINT "Server " + serverName + " removed."
+    END METHOD
+
+    // Get the next available server for a request
+    METHOD getNextServer() RETURNS String
+        IF this.servers.isEmpty() THEN
+            RETURN "No available servers."
+        END IF
+        
+        // Round-robin logic:
+        // 1. Get the server from the front
+        String server = this.servers.dequeue()
+        // 2. Add it back to the end for the next cycle
+        this.servers.enqueue(server)
+        
+        RETURN server
+    END METHOD
+
+    METHOD processRequests(Integer numberOfRequests)
+        FOR i FROM 1 TO numberOfRequests
+            String assignedServer = getNextServer()
+            PRINT "Request R" + i + " -> " + assignedServer
+        END FOR
+    END METHOD
+
+END CLASS
+
+// Main simulation flow
+FUNCTION main()
+    LoadBalancer balancer = NEW LoadBalancer()
+
+    // 1. Initial servers
+    balancer.addServer("S1")
+    balancer.addServer("S2")
+    balancer.addServer("S3")
+    PRINT "--- Processing initial requests ---"
+    balancer.processRequests(3) // R1->S1, R2->S2, R3->S3
+
+    // 2. Add a new server dynamically
+    PRINT "\n--- Adding a new server S4 ---"
+    balancer.addServer("S4")
+    balancer.processRequests(4) // R4->S1, R5->S2, R6->S3, R7->S4
+
+    // 3. Remove a server that has failed
+    PRINT "\n--- Removing server S2 due to failure ---"
+    balancer.removeServer("S2")
+    balancer.processRequests(4) // R8->S1, R9->S3, R10->S4, R11->S1
+
+END FUNCTION
+🔴 Autocomplete Search Suggestions – Trie Implementation
+This solution uses a Trie (Prefix Tree), which is the ideal data structure for prefix-based searches. Each node represents a character, and a path from the root to a node marked isEndOfWord represents a complete keyword. To find suggestions, we traverse to the node representing the prefix and then perform a search (like DFS) from that node to find all possible word completions. This is extremely fast, with lookup time proportional to the length of the prefix, not the number of words.
+
+Java
+
+// PSEUDO-CODE
+
+// Node structure for the Trie
+CLASS TrieNode
+    PROPERTY children: Map<Character, TrieNode>
+    PROPERTY isEndOfWord: Boolean
+    PROPERTY popularityScore: Integer
+
+    CONSTRUCTOR()
+        this.children = NEW Map()
+        this.isEndOfWord = false
+        this.popularityScore = 0
+    END CONSTRUCTOR
+END CLASS
+
+CLASS Trie
+    PRIVATE root: TrieNode
+
+    CONSTRUCTOR()
+        this.root = NEW TrieNode()
+    END CONSTRUCTOR
+
+    // Insert a word into the Trie
+    METHOD insert(String word, Integer popularity)
+        TrieNode current = this.root
+        FOR EACH char IN word
+            // Get the child node; if it doesn't exist, create it
+            current = current.children.computeIfAbsent(char, c -> NEW TrieNode())
+        END FOR
+        current.isEndOfWord = true
+        current.popularityScore = popularity
+    END METHOD
+
+    // Search for all words with a given prefix
+    METHOD suggest(String prefix) RETURNS List<String>
+        TrieNode prefixNode = findPrefixNode(prefix)
+        IF prefixNode IS NULL THEN
+            RETURN EMPTY List
+        END IF
+
+        List<Pair<String, Integer>> suggestions = NEW List()
+        findAllWordsFromNode(prefixNode, prefix, suggestions)
+
+        // Sort suggestions by popularity in descending order
+        suggestions.sort((a, b) -> b.popularity.compareTo(a.popularity))
+        
+        // Return just the words
+        RETURN suggestions.map(pair -> pair.word)
+    END METHOD
+
+    // Helper to find the node where the prefix ends
+    PRIVATE METHOD findPrefixNode(String prefix) RETURNS TrieNode
+        TrieNode current = this.root
+        FOR EACH char IN prefix
+            IF NOT current.children.containsKey(char) THEN
+                RETURN NULL // Prefix not in Trie
+            END IF
+            current = current.children.get(char)
+        END FOR
+        RETURN current
+    END METHOD
+
+    // Helper to recursively find all words from a starting node (DFS)
+    PRIVATE METHOD findAllWordsFromNode(TrieNode node, String currentPrefix, List<Pair<String, Integer>> results)
+        IF node.isEndOfWord THEN
+            results.add(NEW Pair(currentPrefix, node.popularityScore))
+        END IF
+
+        FOR EACH entry IN node.children.entrySet()
+            char ch = entry.getKey()
+            TrieNode childNode = entry.getValue()
+            findAllWordsFromNode(childNode, currentPrefix + ch, results)
+        END FOR
+    END METHOD
+END CLASS
+
+// Main execution flow
+FUNCTION main()
+    Trie searchEngine = NEW Trie()
+    searchEngine.insert("pizza hut", 80)
+    searchEngine.insert("pizza point", 95)
+    searchEngine.insert("pita bread", 70)
+    searchEngine.insert("pizzeria", 85)
+
+    // User types "pi"
+    String prefix = "pi"
+    List<String> results = searchEngine.suggest(prefix)
+    PRINT "Suggestions for '" + prefix + "': " + results 
+    // Expected output sorted by popularity: ["pizza point", "pizzeria", "pizza hut", "pita bread"]
+
+    // New restaurant opens
+    searchEngine.insert("pineapple cafe", 75)
+    
+    // User types "p"
+    prefix = "p"
+    results = searchEngine.suggest(prefix)
+    PRINT "Suggestions for '" + prefix + "': " + results
+END FUNCTION
+
+
+
+3. Collections, Generics, Streams
+🔴 Smart Grid Energy Usage Tracker
+
+
+// PSEUDO-CODE
+
+CLASS SmartGridTracker
+    
+    // Main data structure
+    PRIVATE energyData: Map<String, Map<LocalDate, List<Double>>>
+
+    CONSTRUCTOR()
+        this.energyData = NEW Map()
+        // Assume this map is populated with data
+        // Example: energyData.put("Zone-A", Map.of(Date.today(), List.of(120.0, 90.0, 200.0)))
+    END CONSTRUCTOR
+
+    METHOD findPeakUsageReport() RETURNS Map<String, Map<LocalDate, Double>>
+        // Use streams to process the nested map
+        Map<String, Map<LocalDate, Double>> peakReport = this.energyData.entrySet().stream()
+            .collect(
+                // Collector 1: Group by Zone name (the key)
+                Collectors.toMap(
+                    zoneEntry -> zoneEntry.getKey(), // Key for the outer map is the Zone name
+                    
+                    // Collector 2: Process the value (the daily map) for each zone
+                    zoneEntry -> zoneEntry.getValue().entrySet().stream()
+                        .collect(
+                            Collectors.toMap(
+                                dayEntry -> dayEntry.getKey(), // Key for the inner map is the Day
+                                
+                                // For each day, find the max reading in the list
+                                dayEntry -> dayEntry.getValue().stream()
+                                    .max(Double::compareTo)
+                                    .orElse(0.0) // Default to 0 if list is empty
+                            )
+                        )
+                )
+            )
+        
+        RETURN peakReport
+    END METHOD
+END CLASS
+
+// Main execution flow
+FUNCTION main()
+    SmartGridTracker tracker = NEW SmartGridTracker()
+    // Populate tracker.energyData with sample data...
+    // tracker.energyData = {
+    //   "Zone-A": { "2025-08-01": [120, 90, 200, 150], "2025-08-02": [110, 250, 180] },
+    //   "Zone-B": { "2025-08-01": [300, 350, 250] }
+    // }
+
+    Map<String, Map<LocalDate, Double>> report = tracker.findPeakUsageReport()
+
+    // Print the final report
+    report.forEach((zone, dailyPeaks) -> {
+        PRINT "Zone: " + zone
+        dailyPeaks.forEach((day, peak) -> {
+            PRINT "  Day: " + day + ", Peak Usage: " + peak + "kW"
+        })
+    })
+
+    // Expected Output:
+    // Zone: Zone-A
+    //   Day: 2025-08-01, Peak Usage: 200.0kW
+    //   Day: 2025-08-02, Peak Usage: 250.0kW
+    // Zone: Zone-B
+    //   Day: 2025-08-01, Peak Usage: 350.0kW
+END FUNCTION
+
+
+
+🔴 Employee Bonus Distribution Engine
+
+
+// PSEUDO-CODE
+
+CLASS Employee
+    PROPERTY name: String
+    PROPERTY department: String
+    PROPERTY performanceRating: Integer // 1-5
+    PROPERTY salary: Double
+END CLASS
+
+CLASS BonusEngine
+    METHOD calculateBonuses(List<Employee> employees) RETURNS Map<String, Map<String, Double>>
+        
+        // Step 1: Group employees by department
+        Map<String, List<Employee>> employeesByDept = employees.stream()
+            .collect(Collectors.groupingBy(emp -> emp.getDepartment()))
+
+        Map<String, Map<String, Double>> finalReport = NEW Map()
+
+        // Step 2: Iterate over each department to calculate and distribute bonuses
+        employeesByDept.forEach((dept, empList) -> {
+            
+            // Calculate total salary for the department to determine the bonus pool
+            Double totalSalary = empList.stream()
+                .mapToDouble(emp -> emp.getSalary())
+                .sum()
+            Double bonusPool = totalSalary * 0.10 // Pool is 10% of total salaries
+
+            // Calculate total rating points for proportional distribution
+            Integer totalRatingPoints = empList.stream()
+                .mapToInt(emp -> emp.getPerformanceRating())
+                .sum()
+            
+            // If there are no rating points, no bonus can be distributed
+            IF totalRatingPoints == 0 THEN RETURN
+
+            // Calculate bonus for each employee in the department
+            Map<String, Double> departmentBonuses = empList.stream()
+                .collect(Collectors.toMap(
+                    emp -> emp.getName(),
+                    emp -> ( (double) emp.getPerformanceRating() / totalRatingPoints ) * bonusPool
+                ))
+
+            finalReport.put(dept, departmentBonuses)
+        })
+
+        RETURN finalReport
+    END METHOD
+END CLASS
+
+// Main execution flow
+FUNCTION main()
+    List<Employee> employees = [
+        NEW Employee("Alice", "IT", 5, 120000),
+        NEW Employee("Bob", "IT", 3, 90000),
+        NEW Employee("Charlie", "IT", 2, 80000),
+        NEW Employee("Diana", "Sales", 4, 100000),
+        NEW Employee("Eve", "Sales", 5, 110000)
+    ]
+
+    BonusEngine engine = NEW BonusEngine()
+    Map<String, Map<String, Double>> report = engine.calculateBonuses(employees)
+
+    // Print the report
+    report.forEach((dept, bonuses) -> {
+        PRINT "--- Department: " + dept + " ---"
+        bonuses.forEach((empName, bonusAmount) -> {
+            PRINT "  Employee: " + empName + ", Bonus: ₹" + bonusAmount
+        })
+    })
+
+    // --- Example Calculation for IT Department ---
+    // Total Salary = 120k + 90k + 80k = 290k
+    // Bonus Pool = 10% of 290k = 29,000
+    // Total Rating Points = 5 + 3 + 2 = 10
+    // Alice's Bonus = (5 / 10) * 29000 = 14,500
+    // Bob's Bonus   = (3 / 10) * 29000 = 8,700
+    // Charlie's Bonus = (2 / 10) * 29000 = 5,800
+END FUNCTION

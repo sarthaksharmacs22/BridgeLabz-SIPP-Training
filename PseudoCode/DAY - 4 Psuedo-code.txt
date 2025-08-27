@@ -1,0 +1,197 @@
+1. Java OOPs
+🟡 Moderate: Banking Portal
+
+ CLASS Account
+    PROPERTIES:
+        accountNumber
+        accountHolder
+        balance
+
+    METHOD deposit(amount)
+        balance = balance + amount
+
+    METHOD withdraw(amount)
+        PRINT "Generic withdrawal - to be overridden"
+
+    METHOD displayBalance()
+        PRINT "Balance:", balance
+
+CLASS SavingAccount EXTENDS Account
+    CONSTANT MIN_BALANCE = 500
+    METHOD withdraw(amount)
+        IF (balance - amount) >= MIN_BALANCE
+            balance = balance - amount
+        ELSE
+            PRINT "Withdrawal denied. Maintain minimum balance."
+
+CLASS CurrentAccount EXTENDS Account
+    CONSTANT OVERDRAFT_LIMIT = 1000
+    METHOD withdraw(amount)
+        IF (balance - amount) >= -OVERDRAFT_LIMIT
+            balance = balance - amount
+        ELSE
+            PRINT "Overdraft limit exceeded."
+
+MAIN:
+    acc1 = SavingAccount("S001", "Alice", 2000)
+    acc1.withdraw(1600)    // Allowed
+    acc1.withdraw(1800)    // Denied
+
+    acc2 = CurrentAccount("C001", "Bob", 500)
+    acc2.withdraw(1200)    // Allowed with overdraft
+
+
+
+🔴 Difficult — Vehicle Rental System
+
+
+INTERFACE Rentable
+    METHOD rent()
+    METHOD returnVehicle()
+
+ABSTRACT CLASS Vehicle IMPLEMENTS Rentable
+    PROPERTIES:
+        vehicleId
+        brand
+        model
+        dailyRate
+    ABSTRACT METHOD calculateRent(days)
+
+CLASS Car EXTENDS Vehicle
+    METHOD calculateRent(days)
+        RETURN dailyRate * days
+
+CLASS Bike EXTENDS Vehicle
+    METHOD calculateRent(days)
+        RETURN (dailyRate * days) * 0.9  // Discount for bikes
+
+CLASS VehicleFactory
+    METHOD getVehicle(type)
+        IF type == "Car"
+            RETURN new Car()
+        ELSE IF type == "Bike"
+            RETURN new Bike()
+        ELSE
+            RETURN null
+
+MAIN:
+    factory = VehicleFactory()
+    v1 = factory.getVehicle("Car")
+    v1.rent()
+    cost = v1.calculateRent(5)
+    PRINT "Cost:", cost
+
+
+
+2. Data Structures & Algorithms
+🟡 Moderate — Flight Price Analyzer
+
+
+CLASS Flight
+    PROPERTIES:
+        flightNo
+        price
+        duration
+
+FUNCTION mergeSort(list, comparator)
+    IF size(list) <= 1
+        RETURN list
+    mid = size(list) / 2
+    left = mergeSort(left half, comparator)
+    right = mergeSort(right half, comparator)
+    RETURN merge(left, right, comparator)
+
+FUNCTION merge(left, right, comparator)
+    result = []
+    WHILE left AND right NOT empty
+        IF comparator(left[0], right[0]) <= 0
+            ADD left[0] to result
+            REMOVE left[0]
+        ELSE
+            ADD right[0] to result
+            REMOVE right[0]
+    APPEND remaining elements
+    RETURN result
+
+COMPARATOR flightComparator(f1, f2):
+    IF f1.price != f2.price
+        RETURN f1.price - f2.price
+    ELSE
+        RETURN f1.duration - f2.duration
+
+MAIN:
+    flights = [Flight("AI101", 5000, 3), Flight("AI102", 4000, 4), Flight("AI103", 5000, 2)]
+    sortedFlights = mergeSort(flights, flightComparator)
+    PRINT sortedFlights
+
+
+
+
+🔴 Difficult — Crime Prediction Heatmap
+
+
+GRAPH = adjacencyList of zones
+RISK_LEVELS = map(zone -> crimeScore)
+
+FUNCTION dfs(zone, visited, highRiskZones)
+    MARK zone as visited
+    IF RISK_LEVELS[zone] > THRESHOLD
+        ADD zone to highRiskZones
+    FOR neighbor IN GRAPH[zone]
+        IF neighbor NOT visited
+            dfs(neighbor, visited, highRiskZones)
+
+MAIN:
+    visited = {}
+    FOR each zone IN GRAPH
+        IF zone NOT visited
+            highRiskZones = []
+            dfs(zone, visited, highRiskZones)
+            IF size(highRiskZones) > 0
+                PRINT "High Risk Cluster:", highRiskZones
+
+
+
+3. Collections, Generics, Streams
+
+
+MAP<Course, List<Student>> courseMap
+
+FUNCTION register(course, student)
+    IF course NOT in courseMap
+        courseMap[course] = []
+    ADD student TO courseMap[course]
+
+FUNCTION display()
+    FOR course, students IN courseMap
+        PRINT course.name
+        FOR student IN students
+            PRINT " - ", student.name
+
+MAIN:
+    register("Java", "Alice")
+    register("Java", "Bob")
+    register("Python", "Charlie")
+    display()
+
+
+
+
+🔴 Difficult — Digital Wallet Transactions Report
+
+CLASS Transaction
+    PROPERTIES:
+        transactionId
+        merchant
+        amount
+        date  // YYYY-MM-DD
+
+FUNCTION generateReport(transactions)
+    GROUP_BY merchant -> month:
+        key = merchant + "-" + extractMonth(date)
+        sumAmounts = sum of all amounts in that group
+    PRINT grouped result
+
+MAIN:
+    transactions = [T1, T2, T3...]
+    generateReport(transactions)
