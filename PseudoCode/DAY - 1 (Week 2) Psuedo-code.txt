@@ -1,0 +1,168 @@
+1. Java OOPs
+Problem 1: Online Exam Portal
+
+Class User
+    Attributes: username, password
+    Method login()
+        print "Validating user credentials..."
+
+Class Student inherits User
+    Attributes: enrolledCourse
+    Method login()
+        if credentials are valid AND enrolledCourse is not null
+            print "Student logged in successfully. Show available exams."
+        else
+            print "Login failed. Check enrollment or credentials."
+
+Class Admin inherits User
+    Attributes: adminRole
+    Method login()
+        if credentials are valid AND adminRole == "Admin"
+            print "Admin logged in successfully. Show exam management tools."
+        else
+            print "Login failed. Admin privileges required."
+
+MAIN
+    create Student s("john123", "pass", "Math101")
+    create Admin a("admin01", "adminpass", "Admin")
+
+    s.login()  → validates student
+    a.login()  → validates admin
+
+Problem 2: Movie Ticket Booking
+
+Concepts: Encapsulation, Class Composition, Object Interaction
+
+Class Ticket
+    Attributes: movieName, seatNumber, price, status
+    Methods: issueTicket(), cancelTicket()
+
+Class Theatre
+    Attributes: movieSchedule, availableSeats, tickets
+    Methods:
+        issueTicket(movie, seat, customer)
+            if seat available
+                create Ticket object
+                mark seat as booked
+                return ticket
+            else
+                print "Seat not available"
+
+        cancelTicket(ticket)
+            mark ticket as cancelled
+            free the seat
+
+Class Customer
+    Attributes: name, bookedTickets
+    Methods:
+        bookTicket(theatre, movie, seat)
+            call theatre.issueTicket(movie, seat, this)
+        cancelTicket(theatre, ticket)
+            call theatre.cancelTicket(ticket)
+
+MAIN
+    create Theatre T
+    create Customer C("Ravi")
+    ticket1 = C.bookTicket(T, "Avengers: Endgame", "A12")
+    C.cancelTicket(T, ticket1)
+
+2. Data Structures & Algorithms
+Problem 1: Bus Route Navigator
+
+Concepts: LinkedList (Insertion, Deletion, Search)
+
+Class Node
+    Attributes: stopName, next
+
+Class LinkedList
+    Attributes: head
+    Methods:
+        insertAfter(prevStop, newStop)
+            find node with stopName == prevStop
+            create new Node(newStop)
+            link it after prevStop
+
+        deleteStop(stopName)
+            find node with stopName
+            remove from list
+
+        searchStop(stopName)
+            traverse list
+            if found → return true
+            else → return false
+
+MAIN
+    Route: Depot → Main Street → City Mall → Hospital → Airport
+    insertAfter("City Mall", "University Stop")
+    deleteStop("Hospital")
+    searchStop("Airport") → true
+
+
+Problem 2: Attendance Marker
+
+Concepts: 2D Array, Iteration
+Create attendance[students][days]
+
+Method markAttendance(studentId, day, status)
+    attendance[studentId][day] = status
+
+Method updateAttendance(studentId, day, newStatus)
+    attendance[studentId][day] = newStatus
+
+Method generateReport(studentId)
+    count = 0
+    for each day
+        if attendance[studentId][day] == 'P'
+            count++
+    print "Student", studentId, "present for", count, "days"
+
+MAIN
+    markAttendance(1, Day1, 'P')
+    markAttendance(1, Day2, 'P')
+    markAttendance(1, Day3, 'A')
+    updateAttendance(1, Day3, 'P')
+    generateReport(1) → shows 26 days present
+
+
+3. Collections, Generics, Streams
+Problem 1: Daily Tasks Organizer
+
+Concepts: LinkedHashMap (Order preserved)
+
+Class TaskManager
+    Attribute: LinkedHashMap<Integer, String> tasks
+    Method addTask(description)
+        auto-generate taskId
+        tasks.put(taskId, description)
+    Method removeTask(taskId)
+        tasks.remove(taskId)
+    Method showTasks()
+        print tasks in insertion order
+
+MAIN
+    addTask("Check emails") → ID 1
+    addTask("Prepare sales report") → ID 2
+    addTask("Call client") → ID 3
+    removeTask(2)
+    showTasks → {1: Check emails, 3: Call client}
+
+
+Problem 2: Simple Word Counter
+
+Concepts: Map + Stream API
+
+Method wordCounter(paragraph)
+    cleanText = remove punctuation from paragraph
+    words = split(cleanText, " ")
+    map = empty HashMap<String, Integer>
+    for each word in words
+        word = toLowerCase(word)
+        map.put(word, map.getOrDefault(word, 0) + 1)
+    sort map by value (frequency)
+    print words with counts
+
+MAIN
+    Input: "The news today is about the rise in technology trends."
+    Output: the(2), about(1), in(1), is(1), news(1), rise(1), technology(1), today(1), trends(1)
+
+

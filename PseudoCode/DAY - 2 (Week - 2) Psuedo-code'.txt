@@ -1,0 +1,190 @@
+1. Java OOPs
+Problem 1: Online Exam Portal (Basic)
+Class User
+    Attributes: username, password
+    Method login()
+        print "Validating user credentials..."
+
+Class Student inherits User
+    Attribute: enrolledCourse
+    Method login()
+        if credentials are valid AND enrolledCourse is not null
+            print "Student login successful. Show available exams."
+        else
+            print "Student login failed."
+
+Class Admin inherits User
+    Attribute: adminRole
+    Method login()
+        if credentials are valid AND adminRole == "Admin"
+            print "Admin login successful. Show exam management tools."
+        else
+            print "Admin login failed."
+
+MAIN
+    create Student s("john123", "password", "Math101")
+    create Admin a("admin01", "adminpass", "Admin")
+
+    s.login()
+    a.login()
+
+
+Problem 2: Parking Lot Ticketing System
+
+Concepts: Inheritance, Polymorphism, Overriding
+
+Class Vehicle
+    Attributes: vehicleNumber, entryTime
+    Method calculateFee(exitTime)
+        return 0   // overridden in subclasses
+
+Class Car inherits Vehicle
+    Method calculateFee(exitTime)
+        hours = ceil(exitTime - entryTime in hours)
+        return 50 + (hours - 1) * 30
+
+Class Bike inherits Vehicle
+    Method calculateFee(exitTime)
+        hours = ceil(exitTime - entryTime in hours)
+        return 20 + (hours - 1) * 10
+
+Class Truck inherits Vehicle
+    Method calculateFee(exitTime)
+        hours = ceil(exitTime - entryTime in hours)
+        return 100 + (hours - 1) * 50
+
+MAIN
+    create Car c("KA05AB1234", 10:00)
+    create Bike b("KA05XY7890", 11:15)
+    create Truck t("KA09TR5566", 09:30)
+
+    print c.vehicleNumber + " Fee: " + c.calculateFee(13:30) → 125
+    print b.vehicleNumber + " Fee: " + b.calculateFee(12:00) → 30
+    print t.vehicleNumber + " Fee: " + t.calculateFee(14:00) → 325
+
+
+2. Data Structures & Algorithms
+Problem 1: Bus Route Navigator
+
+Class Node
+    Attributes: stopName, next
+
+Class LinkedList
+    Attribute: head
+    Method insertAfter(prevStop, newStop)
+        find node with stopName == prevStop
+        create new Node(newStop)
+        link it after prevStop
+    Method deleteStop(stopName)
+        find node with stopName
+        remove from list
+    Method searchStop(stopName)
+        traverse list
+        if found return true else false
+
+MAIN
+    Initial route: Depot → Main Street → City Mall → Hospital → Airport
+    insertAfter("City Mall", "University Stop")
+    deleteStop("Hospital")
+    searchStop("Airport") → true
+
+
+Problem 2: Attendance Marker
+
+Concepts: 2D Arrays, Iteration, Search
+
+attendance[30][30]   // 30 students × 30 days
+
+Method markAttendance(studentId, day, status)
+    attendance[studentId][day] = status
+
+Method dailySummary(day)
+    count = 0
+    for each student
+        if attendance[student][day] == 1
+            count++
+    print "Day", day, "present:", count
+
+Method monthlySummary(studentId)
+    count = 0
+    for each day
+        if attendance[studentId][day] == 1
+            count++
+    print "Student", studentId, "present", count, "days"
+
+Method defaulters()
+    for each student
+        total = count of 1s in row
+        if total < 22   // less than 75%
+            print "Student", student, "is a defaulter"
+
+MAIN
+    markAttendance(1, 1, 1)
+    markAttendance(3, 1, 0)
+    dailySummary(10)
+    monthlySummary(5)
+    defaulters()
+
+
+3. Collections, Generics, Streams
+Problem 1: Simple Word Counter
+
+Method wordCounter(paragraph)
+    cleanText = removePunctuation(paragraph)
+    words = split(cleanText, " ")
+    map = new HashMap<String, Integer>()
+
+    for each word in words
+        word = toLowerCase(word)
+        map.put(word, map.getOrDefault(word, 0) + 1)
+
+    sort map by value (descending)
+
+    for each entry in map
+        print entry.key + " → " + entry.value
+
+MAIN
+    Input: "Sports bring people together. Sports inspire teamwork. Sports create leaders."
+    Output:
+        sports → 3
+        bring → 1
+        people → 1
+        together → 1
+        inspire → 1
+        teamwork → 1
+        create → 1
+        leaders → 1
+
+Problem 2: Online Survey Report Generator
+
+Concepts: groupingBy(), Averaging
+
+Class SurveyResponse
+    Attributes: restaurantName, rating
+
+Method generateReport(responses)
+    map = group responses by restaurantName
+          and average rating
+
+    for each entry in map
+        print entry.restaurantName + " → " + entry.avgRating
+
+    best = restaurant with max avgRating
+    worst = restaurant with min avgRating
+
+    print "Best Restaurant:", best
+    print "Needs Improvement:", worst
+
+MAIN
+    responses = [
+        (PizzaHut,4), (PizzaHut,5),
+        (KFC,3), (KFC,4),
+        (Subway,5), (Subway,4), (Subway,5)
+    ]
+    generateReport(responses)
+
+OUTPUT:
+    PizzaHut → 4.5
+    KFC → 3.5
+    Subway → 4.67
+    Best = Subway, Worst = KFC
