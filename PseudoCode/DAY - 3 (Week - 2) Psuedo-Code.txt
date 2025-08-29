@@ -81,7 +81,7 @@ Room r2 = new SuiteRoom("Anita", 202, 2);
 print("Total Bill: ₹" + r2.calculateBill());
 
 
-🟡 Data Structures & Algorithms
+Data Structures & Algorithms
 1. Product Search Bar (Binary Search)
 
 String[] catalog = {"AirPods", "Backpack", "Camera", "Laptop", "Shoes", "Smartphone", "Watch"};
@@ -127,7 +127,7 @@ for (s in sortedList) {
 
 
 
-🟡 Collections, Generics, Streams
+Collections, Generics, Streams
 1. Hospital Department Mapping
 
 
@@ -173,3 +173,4 @@ t1.processPayment();
 
 Transaction<Card> t2 = new Transaction<>(new Card("1234-5678-9876-5432", "123", "12/27", 5000));
 t2.processPayment();
+
