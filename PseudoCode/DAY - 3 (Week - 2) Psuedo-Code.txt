@@ -1,0 +1,175 @@
+JAVA  // Atul Gupta // Chetan Chaudhary 
+
+1. Online Course Subscription System
+class Course {
+    private String title;
+    private String duration;
+    private int price;
+
+    // constructor + getters
+}
+
+class Student {
+    private String name;
+    private String email;
+    private List<Course> enrolledCourses;
+
+    // constructor
+    void enrollCourse(Course c) {
+        if (!enrolledCourses.contains(c)) {
+            enrolledCourses.add(c);
+        } else {
+            print("Already enrolled in: " + c.getTitle());
+        }
+    }
+
+    void viewEnrolledCourses() {
+        print(name + "'s Enrolled Courses:");
+        for (Course c : enrolledCourses) {
+            print(c.getTitle() + " - " + c.getDuration() + " - ₹" + c.getPrice());
+        }
+    }
+}
+
+// Driver
+Course java = new Course("Java Programming Basics", "6 weeks", 4999);
+Course ds = new Course("Data Structures in Java", "8 weeks", 5999);
+Course spring = new Course("Spring Boot for Web Development", "10 weeks", 6999);
+
+Student amit = new Student("Amit", "amit@email.com");
+amit.enrollCourse(java);
+amit.enrollCourse(ds);
+amit.viewEnrolledCourses();
+
+Student priya = new Student("Priya", "priya@email.com");
+priya.enrollCourse(spring);
+priya.enrollCourse(java);
+priya.viewEnrolledCourses();
+
+
+2. Hotel Room Reservation System
+
+class Room {
+    protected int roomNumber;
+    protected String customerName;
+    protected int daysStayed;
+
+    double calculateBill() { return 0; }
+}
+
+class DeluxeRoom extends Room {
+    private final int rate = 3000;
+
+    double calculateBill() {
+        return rate * daysStayed;
+    }
+}
+
+class SuiteRoom extends Room {
+    private final int rate = 5000;
+
+    double calculateBill() {
+        return rate * daysStayed;
+    }
+}
+
+// Driver
+Room r1 = new DeluxeRoom("Ravi", 101, 3);
+print("Total Bill: ₹" + r1.calculateBill());
+
+Room r2 = new SuiteRoom("Anita", 202, 2);
+print("Total Bill: ₹" + r2.calculateBill());
+
+
+🟡 Data Structures & Algorithms
+1. Product Search Bar (Binary Search)
+
+String[] catalog = {"AirPods", "Backpack", "Camera", "Laptop", "Shoes", "Smartphone", "Watch"};
+
+boolean binarySearch(String[] arr, String target) {
+    int low = 0, high = arr.length - 1;
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        if (arr[mid].equals(target)) return true;
+        else if (arr[mid].compareTo(target) < 0) low = mid + 1;
+        else high = mid - 1;
+    }
+    return false;
+}
+
+// Driver
+if (binarySearch(catalog, "Laptop"))
+    print("Laptop available in Electronics");
+else
+    print("Laptop not found");
+
+
+
+2. Student Ranking with Merge Sort
+
+class Student {
+    String name;
+    int marks;
+}
+
+List<Student> mergeSort(List<Student> students) {
+    // divide list into halves until size == 1
+    // merge step → compare marks first, if equal compare names alphabetically
+}
+
+// Driver
+Student[] arr = {("Amit", 92), ("Bhavna", 92), ("Kiran", 85), ("Dinesh", 78), ("Charu", 92)};
+sortedList = mergeSort(arr);
+
+for (s in sortedList) {
+    print(s.name + " - " + s.marks);
+}
+
+
+
+🟡 Collections, Generics, Streams
+1. Hospital Department Mapping
+
+
+class Doctor {
+    String name;
+    String specialization;
+    int experienceYears;
+}
+
+Map<String, List<Doctor>> hospital = new HashMap<>();
+
+hospital.put("Cardiology", Arrays.asList(new Doctor("Dr. Mehta", "Cardiologist", 15),
+                                         new Doctor("Dr. Kapoor", "Cardiologist", 10)));
+hospital.put("Neurology", Arrays.asList(new Doctor("Dr. Sharma", "Neurologist", 10),
+                                        new Doctor("Dr. Das", "Neurologist", 8)));
+
+List<Doctor> neuro = hospital.get("Neurology");
+for (Doctor d : neuro) {
+    print(d.name + " - " + d.specialization + " (" + d.experienceYears + " years)");
+}
+
+
+
+2. Payment Gateway Processor (Generics)
+
+class Transaction<T> {
+    private T payment;
+
+    void processPayment() {
+        if (payment is UPI) print("Payment via UPI...");
+        else if (payment is Card) print("Payment via Card...");
+        else if (payment is NetBanking) print("Payment via NetBanking...");
+    }
+}
+
+class UPI { String upiId; int amount; String merchant; }
+class Card { String cardNumber; String cvv; String expiry; int amount; }
+class NetBanking { String bankName; String account; int amount; }
+
+// Driver
+Transaction<UPI> t1 = new Transaction<>(new UPI("ramesh@upi", 1200, "Amazon"));
+t1.processPayment();
+
+Transaction<Card> t2 = new Transaction<>(new Card("1234-5678-9876-5432", "123", "12/27", 5000));
+t2.processPayment();
